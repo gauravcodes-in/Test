@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberInvaders - NIET Cyber Security Club</title>
+    <style>
+        :root {
+            --background: 240 10% 3.9%;
+            --foreground: 0 0% 98%;
+            --card: 240 10% 3.9%;
+            --card-foreground: 0 0% 98%;
+            --popover: 240 10% 3.9%;
+            --popover-foreground: 0 0% 98%;
+            --primary: 180 100% 50%; /* Cyan */
+            --primary-foreground: 0 0% 9%;
+            --secondary: 270 100% 60%; /* Purple */
+            --secondary-foreground: 0 0% 98%;
+            --muted: 240 5% 25%;
+            --muted-foreground: 240 5% 65%;
+            --accent: 240 5% 15%;
+            --accent-foreground: 0 0% 98%;
+            --destructive: 0 100% 50%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 240 5% 25%;
+            --input: 240 5% 25%;
+            --ring: 142.1 70.6% 45.3%;
+
+            --cyber-primary: 180 100% 50%; /* Neon cyan */
+            --cyber-secondary: 270 100% 60%; /* Neon purple */
+            --cyber-tertiary: 135 100% 50%; /* Neon green */
+            --cyber-background: 240 10% 5%;
+            --cyber-dark: 240 10% 10%;
+            --cyber-terminal-green: 135 100% 60%;
+            --cyber-glow-cyan: 180 100% 50%;
+            --cyber-glow-purple: 270 100% 60%;
+            --cyber-glow-green: 135 100% 50%;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+                "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
+                "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+            background-color: hsl(240, 10%, 5%);
+            color: white;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .matrix-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .neon-text-cyan {
+            color: #00ffff;
+            text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+        }
+
+        .neon-text-purple {
+            color: #9933ff;
+            text-shadow: 0 0 5px #9933ff, 0 0 10px #9933ff;
+        }
+
+        .neon-text-green {
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00;
+        }
+
+        .hacking-text {
+            animation: glitch 0.5s infinite;
+        }
+
+        @keyframes glitch {
+            0% {
+                text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+                -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+                0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            14% {
+                text-shadow: 0.05em 0 0 rgba(255, 0, 0, 0.75),
+                -0.025em -0.05em 0 rgba(0, 255, 0, 0.75),
+                0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            15% {
+                text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+                0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+                -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            49% {
+                text-shadow: -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+                0.025em 0.025em 0 rgba(0, 255, 0, 0.75),
+                -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            50% {
+                text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+                0.05em 0 0 rgba(0, 255, 0, 0.75),
+                0 -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            99% {
+                text-shadow: 0.025em 0.05em 0 rgba(255, 0, 0, 0.75),
+                0.05em 0 0 rgba(0, 255, 0, 0.75),
+                0 -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+            100% {
+                text-shadow: -0.025em 0 0 rgba(255, 0, 0, 0.75),
+                -0.025em -0.025em 0 rgba(0, 255, 0, 0.75),
+                -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+            }
+        }
+
+        .terminal-prompt::before {
+            content: "> ";
+            color: #00ff00;
+        }
+
+        .cyber-button {
+            background-color: transparent;
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            padding: 0.5rem 1rem;
+            font-family: monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-button:hover {
+            background-color: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+        }
+
+        .cyber-button:hover::before {
+            transform: translateX(100%);
+        }
+
+        .cyber-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(0, 255, 255, 0.4),
+                transparent
+            );
+            transform: translateX(-100%);
+            transition: all 0.6s ease;
+        }
+
+        section {
+            padding: 5rem 0;
+            margin: 2rem 0;
+            border-top: 1px solid rgba(0, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .access-level {
+            position: relative;
+            padding: 2rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            background: rgba(10, 10, 20, 0.5);
+            margin-bottom: 3rem;
+        }
+
+        .access-level-header {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            padding: 0 1rem;
+            font-size: 0.75rem;
+            color: #00ffff;
+            letter-spacing: 2px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            background: rgba(20, 20, 40, 0.5);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transform: translateY(-5px);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, #00ffff, transparent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card h3 {
+            color: #00ffff;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .hologram-card {
+            perspective: 1000px;
+            height: 350px;
+        }
+
+        .hologram-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .hologram-card:hover .hologram-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .hologram-card-front,
+        .hologram-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            padding: 1.5rem;
+            background: rgba(10, 10, 20, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hologram-card-back {
+            transform: rotateY(180deg);
+            background: rgba(10, 10, 30, 0.8);
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            background-color: #00ffff;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            box-shadow: 0 0 10px #00ffff;
+            animation: pulse-glow 2s infinite;
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                box-shadow: 0 0 5px #00ffff;
+            }
+            50% {
+                box-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff;
+            }
+            100% {
+                box-shadow: 0 0 5px #00ffff;
+            }
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 10px 40px;
+            width: 50%;
+            box-sizing: border-box;
+            margin: 2rem 0;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #000;
+            border: 3px solid #00ffff;
+            border-radius: 50%;
+            top: 15px;
+            box-shadow: 0 0 10px #00ffff;
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(odd)::after {
+            right: -12px;
+        }
+
+        .timeline-item:nth-child(even)::after {
+            left: -12px;
+        }
+
+        .terminal-form {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #00ff00;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            font-family: monospace;
+        }
+
+        .terminal-form h3 {
+            color: #00ff00;
+            margin-bottom: 1.5rem;
+        }
+
+        .terminal-form input,
+        .terminal-form textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-bottom: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            font-family: monospace;
+        }
+
+        .terminal-form input::placeholder,
+        .terminal-form textarea::placeholder {
+            color: rgba(0, 255, 0, 0.5);
+        }
+
+        .terminal-form button {
+            background: transparent;
+            border: 1px solid #00ff00;
+            color: #00ff00;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: monospace;
+            transition: all 0.3s;
+        }
+
+        .terminal-form button:hover {
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        footer {
+            background-color: #000;
+            color: #00ff00;
+            padding: 2rem 0;
+            font-family: monospace;
+            border-top: 1px solid #00ff00;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-terminal::before {
+            content: "root@CyberInvaders:~# ";
+            color: #00ff00;
+            font-weight: bold;
+        }
+
+        .footer-terminal {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-links a {
+            color: #00ffff;
+            text-decoration: none;
+            margin-right: 1rem;
+            transition: all 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #00ff00;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .matrix-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="matrix-bg"></div>
+        <div class="header-content">
+            <h1>
+                <span class="neon-text-cyan">Welcome to </span>
+                <span class="neon-text-purple hacking-text">CyberInvaders</span>
+            </h1>
+            <p>Unleashing the Power of Cybersecurity at NIET</p>
+            <div style="margin-top: 2rem;">
+                <p class="neon-text-green terminal-prompt">Access Granted.</p>
+                <button class="cyber-button" style="margin-top: 1rem;">
+                    <span class="terminal-prompt">Join the Club</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- About Section -->
+        <section id="about">
+            <div class="container">
+                <div class="access-level">
+                    <span class="access-level-header">ACCESS LEVEL 1</span>
+                    <h2 class="neon-text-purple">About Us</h2>
+                    <p>The NIET Cyber Security Club "CyberInvaders" is a community of passionate security enthusiasts dedicated to exploring and advancing the field of cybersecurity. Our mission is to cultivate a security-first mindset and develop cutting-edge skills to protect digital infrastructure against evolving threats.</p>
+                    
+                    <div style="margin-top: 2rem;">
+                        <div class="card">
+                            <h3 class="terminal-prompt">Mission</h3>
+                            <p>To create a collaborative environment where students can explore, learn, and excel in cybersecurity through hands-on activities, knowledge sharing, and industry connections.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activities Section -->
+        <section id="activities">
+            <div class="container">
+                <div class="access-level">
+                    <span class="access-level-header">ACCESS LEVEL 2</span>
+                    <h2 class="neon-text-purple">Activities</h2>
+                    <p>Explore the range of activities we conduct to enhance cybersecurity skills and awareness.</p>
+                    
+                    <div class="grid">
+                        <div class="card">
+                            <h3 class="terminal-prompt">CTF Competitions</h3>
+                            <p>Participate in Capture The Flag competitions to test and improve your hacking skills in a controlled environment.</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="terminal-prompt">Workshops</h3>
+                            <p>Hands-on technical workshops on various cybersecurity tools, techniques, and methodologies.</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="terminal-prompt">Security Research</h3>
+                            <p>Collaborate on research projects exploring emerging threats and defensive strategies.</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="terminal-prompt">Hackathons</h3>
+                            <p>Intensive coding and hacking events to build security tools and solutions.</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="terminal-prompt">Industry Talks</h3>
+                            <p>Guest lectures from cybersecurity professionals sharing industry insights and career guidance.</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="terminal-prompt">Cyber Labs</h3>
+                            <p>Access to specialized cybersecurity lab environments for practice and experimentation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section id="events">
+            <div class="container">
+                <div class="access-level">
+                    <span class="access-level-header">ACCESS LEVEL 3</span>
+                    <h2 class="neon-text-purple">Events Timeline</h2>
+                    <p>Our upcoming and past events in the cybersecurity domain.</p>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <h3 class="neon-text-cyan">CyberSec Workshop 2025</h3>
+                            <p>October 15, 2025</p>
+                            <p>Hands-on workshop on penetration testing methodologies using modern tools and techniques.</p>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <h3 class="neon-text-cyan">Annual CTF Competition</h3>
+                            <p>November 5-6, 2025</p>
+                            <p>48-hour Capture The Flag event with challenges in web exploitation, cryptography, reverse engineering, and more.</p>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <h3 class="neon-text-cyan">Security Summit 2025</h3>
+                            <p>December 10, 2025</p>
+                            <p>Industry experts sharing insights on emerging threats and defense strategies in the cybersecurity landscape.</p>
+                        </div>
+                        
+                        <div class="timeline-item">
+                            <h3 class="neon-text-cyan">Bug Bounty Workshop</h3>
+                            <p>January 20, 2026</p>
+                            <p>Learn how to find and responsibly disclose security vulnerabilities in real-world applications.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team">
+            <div class="container">
+                <div class="access-level">
+                    <span class="access-level-header">ACCESS LEVEL 4</span>
+                    <h2 class="neon-text-purple">Our Team</h2>
+                    <p>Meet the minds behind CyberInvaders. Our team consists of passionate cybersecurity enthusiasts dedicated to fostering a security-aware community.</p>
+                    
+                    <h3 class="neon-text-cyan" style="margin-top: 2rem;">Faculty Coordinators</h3>
+                    <div class="grid">
+                        <div class="hologram-card">
+                            <div class="hologram-card-inner">
+                                <div class="hologram-card-front">
+                                    <h3 class="neon-text-cyan">Dr. Ankit Verma</h3>
+                                    <p>Faculty Advisor</p>
+                                    <p>Cybersecurity Professor</p>
+                                </div>
+                                <div class="hologram-card-back">
+                                    <h4>Expertise:</h4>
+                                    <ul>
+                                        <li>Network Security</li>
+                                        <li>Cryptography</li>
+                                        <li>Security Architecture</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="hologram-card">
+                            <div class="hologram-card-inner">
+                                <div class="hologram-card-front">
+                                    <h3 class="neon-text-cyan">Prof. Neha Sharma</h3>
+                                    <p>Technical Mentor</p>
+                                    <p>AI Security Researcher</p>
+                                </div>
+                                <div class="hologram-card-back">
+                                    <h4>Expertise:</h4>
+                                    <ul>
+                                        <li>AI/ML Security</li>
+                                        <li>Secure Coding</li>
+                                        <li>Threat Intelligence</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="neon-text-cyan" style="margin-top: 3rem;">Student Coordinators</h3>
+                    <div class="grid">
+                        <div class="hologram-card">
+                            <div class="hologram-card-inner">
+                                <div class="hologram-card-front">
+                                    <h3 class="neon-text-cyan">Rahul Sharma</h3>
+                                    <p>President</p>
+                                    <p>B.Tech CSE (4th Year)</p>
+                                </div>
+                                <div class="hologram-card-back">
+                                    <h4>Skills:</h4>
+                                    <ul>
+                                        <li>Penetration Testing</li>
+                                        <li>Web Application Security</li>
+                                        <li>CTF Enthusiast</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="hologram-card">
+                            <div class="hologram-card-inner">
+                                <div class="hologram-card-front">
+                                    <h3 class="neon-text-cyan">Priya Patel</h3>
+                                    <p>Vice President</p>
+                                    <p>B.Tech CSE (3rd Year)</p>
+                                </div>
+                                <div class="hologram-card-back">
+                                    <h4>Skills:</h4>
+                                    <ul>
+                                        <li>Reverse Engineering</li>
+                                        <li>Malware Analysis</li>
+                                        <li>Digital Forensics</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="hologram-card">
+                            <div class="hologram-card-inner">
+                                <div class="hologram-card-front">
+                                    <h3 class="neon-text-cyan">Arjun Mehra</h3>
+                                    <p>Technical Lead</p>
+                                    <p>B.Tech AI/ML (3rd Year)</p>
+                                </div>
+                                <div class="hologram-card-back">
+                                    <h4>Skills:</h4>
+                                    <ul>
+                                        <li>Cloud Security</li>
+                                        <li>Network Penetration</li>
+                                        <li>Security Automation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Developers Section -->
+        <section id="developers">
+            <div class="container">
+                <div class="access-level">
+                    <span class="access-level-header">ACCESS LEVEL 5</span>
+                    <h2 class="neon-text-purple">Developers</h2>
+                    <p>The creative minds behind this website.</p>
+                    
+                    <div class="grid">
+                        <div class="card">
+                            <h3 class="terminal-prompt">Gaurav Kumar</h3>
+                            <p>Lead Developer</p>
+                            <p>Frontend & UI/UX Design</p>
+                        </div>
+                        
+                        <div class="card">
+                            <h3 class="terminal-prompt">CyberTeam</h3>
+                            <p>Content & Design</p>
+                            <p>NIET Cyber Security Club</p>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <h3 class="neon-text-cyan">Tech Stack</h3>
+                        <ul style="list-style-type: none; margin-top: 1rem;">
+                            <li class="terminal-prompt">Next.js with TypeScript</li>
+                            <li class="terminal-prompt">TailwindCSS for styling</li>
+                            <li class="terminal-prompt">GSAP for animations</li>
+                            <li class="terminal-prompt">Framer Motion for transitions</li>
+                            <li class="terminal-prompt">Three.js for background effects</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Join Us Section -->
+        <section id="join">
+            <div class="container">
+                <div class="access-level">
+                    <span class="access-level-header">ACCESS LEVEL 6</span>
+                    <h2 class="neon-text-purple">Join Us</h2>
+                    <p>Become a part of the CyberInvaders community. Fill out the form below to join our club.</p>
+                    
+                    <div class="terminal-form">
+                        <h3 class="terminal-prompt">Membership Application</h3>
+                        <form>
+                            <div>
+                                <input type="text" placeholder="Full Name" />
+                            </div>
+                            <div>
+                                <input type="email" placeholder="Email Address" />
+                            </div>
+                            <div>
+                                <input type="text" placeholder="Course & Year" />
+                            </div>
+                            <div>
+                                <textarea placeholder="Why do you want to join CyberInvaders?" rows="3"></textarea>
+                            </div>
+                            <div>
+                                <input type="text" placeholder="Any prior experience in cybersecurity? (Optional)" />
+                            </div>
+                            <div>
+                                <button type="submit" class="terminal-prompt">Submit Application</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-terminal">
+                <span>NIET Cyber Security Club © 2025</span>
+            </div>
+            <div class="footer-links" style="margin-top: 1rem;">
+                <a href="#" class="terminal-prompt">Home</a>
+                <a href="#about" class="terminal-prompt">About</a>
+                <a href="#activities" class="terminal-prompt">Activities</a>
+                <a href="#events" class="terminal-prompt">Events</a>
+                <a href="#team" class="terminal-prompt">Team</a>
+                <a href="#join" class="terminal-prompt">Join Us</a>
+            </div>
+            <div style="margin-top: 2rem;">
+                <p class="terminal-prompt">Contact: cyberinvaders@niet.edu.in</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Matrix Rain Effect
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.className = 'matrix-animation';
+            document.querySelector('.matrix-bg').appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            
+            // Matrix characters
+            const chars = '01アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン@#$%&{([)]}><*+~|^?!';
+            const charArray = chars.split('');
+            
+            // Size of characters and columns
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            
+            // Create drops
+            const drops = Array.from({ length: Math.floor(columns) }, () => 1);
+            
+            function draw() {
+                // Semi-transparent black background
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Green text for matrix effect
+                ctx.fillStyle = '#00ffff';
+                ctx.font = `${fontSize}px monospace`;
+                
+                // Loop through drops
+                for (let i = 0; i < drops.length; i++) {
+                    // Random character
+                    const char = charArray[Math.floor(Math.random() * charArray.length)];
+                    
+                    // Draw character
+                    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+                    
+                    // Reset drops when they reach bottom
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    
+                    drops[i]++;
+                }
+            }
+            
+            // Run animation
+            setInterval(draw, 33);
+            
+            // Resize canvas when window is resized
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        });
+
+        // Intersection Observer for revealing access levels
+        document.addEventListener('DOMContentLoaded', function() {
+            const accessLevels = document.querySelectorAll('.access-level');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animation = 'fadeIn 1s forwards';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            accessLevels.forEach(level => {
+                observer.observe(level);
+                level.style.opacity = '0';
+            });
+        });
+        
+        // Add fadeIn animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

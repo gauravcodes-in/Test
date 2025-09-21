@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberInvaders - NIET Cyber Security Club</title>
+  <style>
+    /* Base styles */
+    :root {
+      --background: #050A15;
+      --foreground: #f8f8f2;
+      --cyber-primary: #00ffff;
+      --cyber-secondary: #9933ff;
+      --cyber-accent: #00ff00;
+      --cyber-dark: #0a0a1c;
+      --cyber-terminal-green: #33ff33;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', monospace;
+      background-color: var(--background);
+      color: var(--foreground);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Matrix background */
+    .matrix-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: -1;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                  url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><text x="5" y="15" fill="%2300ffff" font-size="10">01010アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギ01010</text></svg>');
+    }
+
+    .matrix-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 10, 20, 0.5);
+    }
+
+    /* Navigation */
+    nav {
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--cyber-primary);
+      box-shadow: 0 0 10px var(--cyber-primary);
+    }
+
+    nav .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--cyber-primary);
+      text-shadow: 0 0 5px var(--cyber-primary);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    nav ul li a {
+      color: var(--foreground);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 1px;
+      bottom: -5px;
+      left: 0;
+      background-color: var(--cyber-primary);
+      transition: width 0.3s ease;
+    }
+
+    nav ul li a:hover {
+      color: var(--cyber-primary);
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .neon-text-cyan {
+      color: var(--cyber-primary);
+      text-shadow: 0 0 5px var(--cyber-primary), 0 0 10px var(--cyber-primary);
+    }
+
+    .neon-text-purple {
+      color: var(--cyber-secondary);
+      text-shadow: 0 0 5px var(--cyber-secondary), 0 0 10px var(--cyber-secondary);
+    }
+
+    .btn {
+      display: inline-block;
+      border: 1px solid var(--cyber-primary);
+      padding: 0.75rem 2rem;
+      background: transparent;
+      color: var(--cyber-primary);
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: rgba(0, 255, 255, 0.1);
+      box-shadow: 0 0 10px var(--cyber-primary);
+    }
+
+    /* Terminal effect */
+    .terminal-prompt::before {
+      content: '> ';
+      color: var(--cyber-terminal-green);
+    }
+
+    .typing-effect {
+      overflow: hidden;
+      border-right: 2px solid var(--cyber-terminal-green);
+      white-space: nowrap;
+      margin: 0 auto;
+      animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: var(--cyber-terminal-green) }
+    }
+
+    /* Section styles */
+    section {
+      padding: 5rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      margin-bottom: 3rem;
+      text-align: center;
+    }
+
+    .section-header h2 {
+      font-size: 2.5rem;
+      color: var(--cyber-primary);
+      margin-bottom: 1rem;
+    }
+
+    .section-header p {
+      color: var(--foreground);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Access level header */
+    .access-level-header {
+      display: block;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      color: var(--cyber-terminal-green);
+      font-size: 0.875rem;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+    }
+
+    /* Card styles */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .glass-card {
+      background: rgba(10, 10, 28, 0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      padding: 2rem;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 15px var(--cyber-primary);
+      border-color: var(--cyber-primary);
+    }
+
+    .glass-card h3 {
+      font-size: 1.5rem;
+      color: var(--cyber-primary);
+      margin-bottom: 1rem;
+    }
+
+    /* Holographic card */
+    .holo-card {
+      position: relative;
+      width: 300px;
+      height: 400px;
+      perspective: 1000px;
+      margin: 0 auto;
+    }
+
+    .holo-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .holo-card:hover .holo-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .holo-card-front, .holo-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border: 1px solid var(--cyber-secondary);
+      border-radius: 4px;
+      padding: 1.5rem;
+      background: linear-gradient(
+        45deg,
+        rgba(10, 10, 28, 0.8),
+        rgba(153, 51, 255, 0.2),
+        rgba(0, 255, 255, 0.2),
+        rgba(10, 10, 28, 0.8)
+      );
+    }
+
+    .holo-card-back {
+      transform: rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Timeline styles */
+    .timeline {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      background-color: var(--cyber-primary);
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -3px;
+      box-shadow: 0 0 10px var(--cyber-primary);
+    }
+
+    .timeline-item {
+      padding: 10px 40px;
+      position: relative;
+      width: 50%;
+    }
+
+    .timeline-item::after {
+      content: '';
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      right: -13px;
+      top: 15px;
+      background-color: var(--background);
+      border: 4px solid var(--cyber-primary);
+      border-radius: 50%;
+      z-index: 1;
+      box-shadow: 0 0 10px var(--cyber-primary);
+    }
+
+    .left {
+      left: 0;
+    }
+
+    .right {
+      left: 50%;
+    }
+
+    .right::after {
+      left: -12px;
+    }
+
+    /* Join form styles */
+    .terminal-form {
+      background-color: rgba(10, 10, 28, 0.8);
+      border: 1px solid var(--cyber-terminal-green);
+      padding: 2rem;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .terminal-form-header {
+      font-family: 'Courier New', monospace;
+      color: var(--cyber-terminal-green);
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--cyber-terminal-green);
+    }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--cyber-terminal-green);
+      color: var(--foreground);
+      font-family: 'Courier New', monospace;
+    }
+
+    /* Footer */
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      border-top: 1px solid var(--cyber-primary);
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+
+    .social-link {
+      color: var(--cyber-primary);
+      font-size: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-link:hover {
+      color: var(--cyber-secondary);
+      transform: translateY(-3px);
+    }
+
+    /* Glitch effect */
+    .glitch-text {
+      position: relative;
+      animation: glitch 1s infinite;
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="matrix-background">
+    <div class="matrix-overlay"></div>
+  </div>
+
+  <nav>
+    <div class="logo">CyberInvaders</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#activities">Activities</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#join">Join Us</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>
+      <span class="neon-text-cyan">Welcome to </span>
+      <span class="neon-text-purple">CyberInvaders</span>
+    </h1>
+    <p>Unleashing the Power of Cybersecurity at NIET</p>
+    <div style="margin-top: 2rem;">
+      <p class="typing-effect" style="color: var(--cyber-terminal-green); height: 1.5rem;">
+        Access Granted.
+      </p>
+      <a href="#join" class="btn" style="margin-top: 2rem;">
+        <span class="terminal-prompt">Join the Club</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about">
+    <span class="access-level-header">ACCESS LEVEL 1</span>
+    <div class="section-header">
+      <h2>About Us</h2>
+      <p>The NIET Cyber Security Club is dedicated to fostering cybersecurity awareness, skills development, and community engagement.</p>
+    </div>
+    <div class="glass-card">
+      <h3 class="neon-text-cyan">Our Mission</h3>
+      <p>
+        We aim to bridge the gap between theoretical knowledge and practical skills in cybersecurity through workshops, 
+        capture the flag competitions, security research, and industry connections. By creating a vibrant community of 
+        like-minded individuals, we prepare students for the ever-evolving landscape of digital security.
+      </p>
+    </div>
+  </section>
+
+  <!-- Activities Section -->
+  <section id="activities">
+    <span class="access-level-header">ACCESS LEVEL 2</span>
+    <div class="section-header">
+      <h2>Activities</h2>
+      <p>Explore the various activities conducted by our cybersecurity club.</p>
+    </div>
+    <div class="card-grid">
+      <div class="glass-card">
+        <h3 class="terminal-prompt">Capture The Flag</h3>
+        <p>Participate in CTF competitions to solve real-world cybersecurity challenges and puzzles.</p>
+      </div>
+      <div class="glass-card">
+        <h3 class="terminal-prompt">Security Workshops</h3>
+        <p>Hands-on workshops on penetration testing, network security, cryptography, and more.</p>
+      </div>
+      <div class="glass-card">
+        <h3 class="terminal-prompt">Cyber Awareness</h3>
+        <p>Campaigns and seminars to promote cybersecurity awareness on campus and beyond.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Events Timeline Section -->
+  <section id="events">
+    <span class="access-level-header">ACCESS LEVEL 3</span>
+    <div class="section-header">
+      <h2>Events Timeline</h2>
+      <p>Our upcoming and past cybersecurity events.</p>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item left">
+        <div class="glass-card">
+          <h3 class="neon-text-purple">Cyber Security Summit</h3>
+          <p>October 15, 2025</p>
+          <p>Annual summit featuring industry experts, workshops, and networking.</p>
+        </div>
+      </div>
+      <div class="timeline-item right">
+        <div class="glass-card">
+          <h3 class="neon-text-purple">Ethical Hacking Workshop</h3>
+          <p>November 5, 2025</p>
+          <p>Learn ethical hacking techniques from certified professionals.</p>
+        </div>
+      </div>
+      <div class="timeline-item left">
+        <div class="glass-card">
+          <h3 class="neon-text-purple">CTF Competition</h3>
+          <p>December 10, 2025</p>
+          <p>Test your skills in our end-of-year capture the flag competition.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Section -->
+  <section id="team">
+    <span class="access-level-header">ACCESS LEVEL 4</span>
+    <div class="section-header">
+      <h2>Our Team</h2>
+      <p>Meet the cybersecurity experts leading the CyberInvaders.</p>
+    </div>
+    <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+      <div class="holo-card">
+        <div class="holo-card-inner">
+          <div class="holo-card-front">
+            <h3 class="neon-text-cyan">Dr. Jane Doe</h3>
+            <p style="margin-top: 1rem;">Faculty Advisor</p>
+            <div style="width: 150px; height: 150px; background-color: rgba(0,255,255,0.2); border-radius: 50%; margin: 2rem auto;"></div>
+            <p class="terminal-prompt">Cryptography Expert</p>
+          </div>
+          <div class="holo-card-back">
+            <h3 class="neon-text-purple">Dr. Jane Doe</h3>
+            <p>PhD in Cybersecurity</p>
+            <p>10+ years in information security</p>
+            <p>Research focus: Advanced Encryption Algorithms</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="holo-card">
+        <div class="holo-card-inner">
+          <div class="holo-card-front">
+            <h3 class="neon-text-cyan">John Smith</h3>
+            <p style="margin-top: 1rem;">Student President</p>
+            <div style="width: 150px; height: 150px; background-color: rgba(153,51,255,0.2); border-radius: 50%; margin: 2rem auto;"></div>
+            <p class="terminal-prompt">Penetration Testing</p>
+          </div>
+          <div class="holo-card-back">
+            <h3 class="neon-text-purple">John Smith</h3>
+            <p>Final Year, Computer Science</p>
+            <p>OSCP Certified</p>
+            <p>CTF Champion 2024</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Join Us Section -->
+  <section id="join">
+    <span class="access-level-header">ACCESS LEVEL 5</span>
+    <div class="section-header">
+      <h2>Join Us</h2>
+      <p>Become a member of the NIET Cyber Security Club.</p>
+    </div>
+    <form class="terminal-form">
+      <div class="terminal-form-header">
+        <p class="terminal-prompt">new-member-signup.sh</p>
+      </div>
+      <div class="form-group">
+        <label class="terminal-prompt">Name</label>
+        <input type="text" placeholder="Enter your name" />
+      </div>
+      <div class="form-group">
+        <label class="terminal-prompt">Email</label>
+        <input type="email" placeholder="Enter your email" />
+      </div>
+      <div class="form-group">
+        <label class="terminal-prompt">Skill Level</label>
+        <input type="text" placeholder="Beginner / Intermediate / Advanced" />
+      </div>
+      <div class="form-group">
+        <label class="terminal-prompt">Areas of Interest</label>
+        <textarea placeholder="Web Security, Network Security, Cryptography, etc."></textarea>
+      </div>
+      <button type="submit" class="btn">
+        <span class="terminal-prompt">Submit Application</span>
+      </button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p class="terminal-prompt glitch-text">CyberInvaders &copy; 2025 - NIET Cyber Security Club</p>
+    <div class="social-links">
+      <a href="#" class="social-link">Github</a>
+      <a href="#" class="social-link">LinkedIn</a>
+      <a href="#" class="social-link">Twitter</a>
+      <a href="#" class="social-link">Discord</a>
+    </div>
+    <p style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.7;">
+      <span class="terminal-prompt">Secure. Learn. Defend.</span>
+    </p>
+  </footer>
+
+  <script>
+    // Simulate typing effect
+    document.addEventListener('DOMContentLoaded', () => {
+      // Scroll animations
+      document.querySelectorAll('.glass-card').forEach(card => {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+            }
+          });
+        }, { threshold: 0.1 });
+        
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        
+        observer.observe(card);
+      });
+
+      // Access level animations
+      document.querySelectorAll('.access-level-header').forEach(header => {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('typing-effect');
+              const sectionId = entry.target.parentElement.id;
+              const nextSection = document.getElementById(sectionId)?.nextElementSibling;
+              
+              if (nextSection) {
+                setTimeout(() => {
+                  nextSection.classList.add('unlocked');
+                }, 1000);
+              }
+            }
+          });
+        }, { threshold: 0.5 });
+        
+        observer.observe(header);
+      });
+    });
+  </script>
+</body>
+</html>

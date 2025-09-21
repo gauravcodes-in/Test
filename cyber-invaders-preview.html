@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberInvaders - NIET Cyber Security Club</title>
+    <style>
+        :root {
+            --cyber-dark: #0a0a0f;
+            --cyber-primary: #00ffff;
+            --cyber-secondary: #9933ff;
+            --cyber-accent: #00ff00;
+            --cyber-gray: #1a1a2e;
+            --cyber-terminal-green: #33ff33;
+        }
+
+        body {
+            background-color: var(--cyber-dark);
+            color: #f0f0f0;
+            font-family: 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .matrix-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .neon-text-cyan {
+            color: var(--cyber-primary);
+            text-shadow: 0 0 5px var(--cyber-primary), 0 0 10px var(--cyber-primary);
+        }
+
+        .neon-text-purple {
+            color: var(--cyber-secondary);
+            text-shadow: 0 0 5px var(--cyber-secondary), 0 0 10px var(--cyber-secondary);
+        }
+
+        .neon-text-green {
+            color: var(--cyber-accent);
+            text-shadow: 0 0 5px var(--cyber-accent), 0 0 10px var(--cyber-accent);
+        }
+
+        .terminal-prompt::before {
+            content: "> ";
+            color: var(--cyber-terminal-green);
+        }
+
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch-text::before {
+            left: 2px;
+            text-shadow: -2px 0 var(--cyber-primary);
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim 3s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            left: -2px;
+            text-shadow: -2px 0 var(--cyber-secondary);
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim2 2.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% {
+                clip: rect(42px, 9999px, 44px, 0);
+            }
+            5% {
+                clip: rect(12px, 9999px, 59px, 0);
+            }
+            10% {
+                clip: rect(48px, 9999px, 29px, 0);
+            }
+            15.0% {
+                clip: rect(42px, 9999px, 73px, 0);
+            }
+            20% {
+                clip: rect(63px, 9999px, 27px, 0);
+            }
+            25% {
+                clip: rect(34px, 9999px, 55px, 0);
+            }
+            30.0% {
+                clip: rect(86px, 9999px, 73px, 0);
+            }
+            35% {
+                clip: rect(20px, 9999px, 20px, 0);
+            }
+            40% {
+                clip: rect(26px, 9999px, 60px, 0);
+            }
+            45% {
+                clip: rect(25px, 9999px, 66px, 0);
+            }
+            50% {
+                clip: rect(57px, 9999px, 98px, 0);
+            }
+            55.0% {
+                clip: rect(5px, 9999px, 46px, 0);
+            }
+            60.0% {
+                clip: rect(82px, 9999px, 31px, 0);
+            }
+            65% {
+                clip: rect(54px, 9999px, 27px, 0);
+            }
+            70% {
+                clip: rect(28px, 9999px, 99px, 0);
+            }
+            75% {
+                clip: rect(45px, 9999px, 69px, 0);
+            }
+            80% {
+                clip: rect(23px, 9999px, 85px, 0);
+            }
+            85.0% {
+                clip: rect(54px, 9999px, 84px, 0);
+            }
+            90% {
+                clip: rect(45px, 9999px, 47px, 0);
+            }
+            95% {
+                clip: rect(37px, 9999px, 20px, 0);
+            }
+            100% {
+                clip: rect(4px, 9999px, 91px, 0);
+            }
+        }
+
+        @keyframes glitch-anim2 {
+            0% {
+                clip: rect(65px, 9999px, 100px, 0);
+            }
+            5% {
+                clip: rect(52px, 9999px, 74px, 0);
+            }
+            10% {
+                clip: rect(79px, 9999px, 85px, 0);
+            }
+            15.0% {
+                clip: rect(75px, 9999px, 5px, 0);
+            }
+            20% {
+                clip: rect(67px, 9999px, 61px, 0);
+            }
+            25% {
+                clip: rect(14px, 9999px, 79px, 0);
+            }
+            30.0% {
+                clip: rect(1px, 9999px, 66px, 0);
+            }
+            35% {
+                clip: rect(86px, 9999px, 30px, 0);
+            }
+            40% {
+                clip: rect(23px, 9999px, 98px, 0);
+            }
+            45% {
+                clip: rect(85px, 9999px, 72px, 0);
+            }
+            50% {
+                clip: rect(71px, 9999px, 75px, 0);
+            }
+            55.0% {
+                clip: rect(2px, 9999px, 48px, 0);
+            }
+            60.0% {
+                clip: rect(30px, 9999px, 16px, 0);
+            }
+            65% {
+                clip: rect(59px, 9999px, 50px, 0);
+            }
+            70% {
+                clip: rect(41px, 9999px, 62px, 0);
+            }
+            75% {
+                clip: rect(2px, 9999px, 82px, 0);
+            }
+            80% {
+                clip: rect(47px, 9999px, 73px, 0);
+            }
+            85.0% {
+                clip: rect(3px, 9999px, 27px, 0);
+            }
+            90% {
+                clip: rect(26px, 9999px, 55px, 0);
+            }
+            95% {
+                clip: rect(42px, 9999px, 97px, 0);
+            }
+            100% {
+                clip: rect(38px, 9999px, 49px, 0);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .section {
+            padding: 5rem 0;
+            position: relative;
+        }
+
+        .access-level {
+            position: relative;
+            padding: 3rem 1rem;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            background: rgba(10, 10, 15, 0.8);
+            margin-bottom: 3rem;
+        }
+
+        .access-level-header {
+            position: absolute;
+            top: -1rem;
+            left: 1rem;
+            background: var(--cyber-dark);
+            padding: 0.5rem 1rem;
+            color: var(--cyber-terminal-green);
+            font-weight: bold;
+            border: 1px solid var(--cyber-terminal-green);
+        }
+
+        .cyber-card {
+            background: rgba(26, 26, 46, 0.7);
+            border: 1px solid var(--cyber-primary);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            position: relative;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .cyber-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px var(--cyber-primary);
+        }
+
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 95%, var(--cyber-primary) 95%);
+            z-index: -1;
+        }
+
+        .cyber-button {
+            background: transparent;
+            color: var(--cyber-primary);
+            border: 1px solid var(--cyber-primary);
+            padding: 0.75rem 1.5rem;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cyber-button:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 10px var(--cyber-primary);
+        }
+
+        .team-card {
+            perspective: 1000px;
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+
+        .team-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .team-card:hover .team-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .team-card-front, .team-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .team-card-front {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1) 0%, rgba(153,51,255,0.1) 100%);
+            border: 1px solid var(--cyber-primary);
+            padding: 1.5rem;
+        }
+
+        .team-card-back {
+            background: linear-gradient(135deg, rgba(153,51,255,0.1) 0%, rgba(0,255,255,0.1) 100%);
+            border: 1px solid var(--cyber-secondary);
+            padding: 1.5rem;
+            transform: rotateY(180deg);
+        }
+
+        .typing-effect {
+            border-right: 2px solid var(--cyber-terminal-green);
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: var(--cyber-terminal-green); }
+        }
+
+        footer {
+            background: var(--cyber-gray);
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid var(--cyber-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <header>
+        <div class="matrix-background" id="matrix-canvas"></div>
+        <div class="hero-content">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">
+                <span class="neon-text-cyan">Welcome to </span>
+                <span class="neon-text-purple glitch-text" data-text="CyberInvaders">CyberInvaders</span>
+            </h1>
+            <p style="font-size: 1.5rem; margin-bottom: 2rem;">Unleashing the Power of Cybersecurity at NIET</p>
+            <div>
+                <p class="typing-effect neon-text-green" style="height: 1.5rem; margin-bottom: 1rem;">Access Granted.</p>
+                <button class="cyber-button terminal-prompt">Join the Club</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section class="section">
+        <div class="container">
+            <div class="access-level">
+                <span class="access-level-header">ACCESS LEVEL 1</span>
+                <h2 class="neon-text-cyan" style="margin-bottom: 2rem;">About Us</h2>
+                <p>The NIET Cyber Security Club (CyberInvaders) is a student-led organization dedicated to promoting cybersecurity awareness, education, and skills development. Our mission is to create a community of security-minded individuals who collaborate to tackle evolving cyber threats.</p>
+                <div class="cyber-card" style="margin-top: 2rem;">
+                    <h3 class="neon-text-green">Our Mission</h3>
+                    <p>To cultivate a generation of cybersecurity professionals equipped with the knowledge, skills, and ethical foundation needed to protect digital assets and infrastructure in an increasingly connected world.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activities Section -->
+    <section class="section">
+        <div class="container">
+            <div class="access-level">
+                <span class="access-level-header">ACCESS LEVEL 2</span>
+                <h2 class="neon-text-cyan" style="margin-bottom: 2rem;">Activities</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div class="cyber-card">
+                        <h3 class="neon-text-purple">CTF Competitions</h3>
+                        <p>Participate in Capture The Flag competitions to test and enhance your practical cybersecurity skills.</p>
+                    </div>
+                    <div class="cyber-card">
+                        <h3 class="neon-text-purple">Workshops</h3>
+                        <p>Hands-on sessions on ethical hacking, penetration testing, digital forensics, and more.</p>
+                    </div>
+                    <div class="cyber-card">
+                        <h3 class="neon-text-purple">Security Research</h3>
+                        <p>Collaborative research on emerging vulnerabilities, threat intelligence, and defense mechanisms.</p>
+                    </div>
+                    <div class="cyber-card">
+                        <h3 class="neon-text-purple">Guest Lectures</h3>
+                        <p>Learn from industry experts and cybersecurity professionals through talks and Q&A sessions.</p>
+                    </div>
+                    <div class="cyber-card">
+                        <h3 class="neon-text-purple">Security Audits</h3>
+                        <p>Help secure campus technology infrastructure through authorized security assessments.</p>
+                    </div>
+                    <div class="cyber-card">
+                        <h3 class="neon-text-purple">Certification Prep</h3>
+                        <p>Study groups and resources to prepare for industry certifications like Security+, CEH, and OSCP.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section class="section">
+        <div class="container">
+            <div class="access-level">
+                <span class="access-level-header">ACCESS LEVEL 3</span>
+                <h2 class="neon-text-cyan" style="margin-bottom: 2rem;">Upcoming Events</h2>
+                <div style="position: relative; padding-left: 3rem; border-left: 2px solid var(--cyber-primary);">
+                    <div class="cyber-card" style="margin-left: -2rem;">
+                        <span style="position: absolute; left: -1rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; background: var(--cyber-primary); border-radius: 50%;"></span>
+                        <h3 class="neon-text-green">CyberNight Hackathon</h3>
+                        <p>Date: October 15, 2025</p>
+                        <p>A 12-hour hackathon focused on solving cybersecurity challenges and building security tools.</p>
+                    </div>
+                    
+                    <div class="cyber-card" style="margin-left: -2rem;">
+                        <span style="position: absolute; left: -1rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; background: var(--cyber-primary); border-radius: 50%;"></span>
+                        <h3 class="neon-text-green">Web App Security Workshop</h3>
+                        <p>Date: November 5, 2025</p>
+                        <p>Learn to identify and exploit common web vulnerabilities, and how to secure web applications.</p>
+                    </div>
+                    
+                    <div class="cyber-card" style="margin-left: -2rem;">
+                        <span style="position: absolute; left: -1rem; top: 50%; transform: translateY(-50%); width: 1rem; height: 1rem; background: var(--cyber-primary); border-radius: 50%;"></span>
+                        <h3 class="neon-text-green">Cyber Defense Competition</h3>
+                        <p>Date: December 10, 2025</p>
+                        <p>Teams compete to defend their networks while attacking others in a controlled environment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="section">
+        <div class="container">
+            <div class="access-level">
+                <span class="access-level-header">ACCESS LEVEL 4</span>
+                <h2 class="neon-text-cyan" style="margin-bottom: 2rem;">Our Team</h2>
+                <h3 class="neon-text-purple">Faculty Coordinators</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+                    <div class="team-card">
+                        <div class="team-card-inner">
+                            <div class="team-card-front">
+                                <div style="width: 100px; height: 100px; background-color: var(--cyber-gray); border-radius: 50%; border: 2px solid var(--cyber-primary); margin-bottom: 1rem;"></div>
+                                <h4 class="neon-text-cyan">Dr. Anil Kumar</h4>
+                                <p>Faculty Advisor</p>
+                                <p class="terminal-prompt">Accessing Profile...</p>
+                            </div>
+                            <div class="team-card-back">
+                                <h4 class="neon-text-green">Dr. Anil Kumar</h4>
+                                <p>PhD in Cybersecurity</p>
+                                <p>Specialization: Network Security, Cryptography</p>
+                                <p>15+ years of industry experience</p>
+                                <p>Email: anil.kumar@niet.edu</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-card-inner">
+                            <div class="team-card-front">
+                                <div style="width: 100px; height: 100px; background-color: var(--cyber-gray); border-radius: 50%; border: 2px solid var(--cyber-primary); margin-bottom: 1rem;"></div>
+                                <h4 class="neon-text-cyan">Prof. Meenakshi Sharma</h4>
+                                <p>Co-Advisor</p>
+                                <p class="terminal-prompt">Accessing Profile...</p>
+                            </div>
+                            <div class="team-card-back">
+                                <h4 class="neon-text-green">Prof. Meenakshi Sharma</h4>
+                                <p>MS in Information Security</p>
+                                <p>Specialization: Digital Forensics, Threat Intelligence</p>
+                                <p>Published researcher in malware analysis</p>
+                                <p>Email: meenakshi.s@niet.edu</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 class="neon-text-purple">Student Coordinators</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem;">
+                    <div class="team-card">
+                        <div class="team-card-inner">
+                            <div class="team-card-front">
+                                <div style="width: 100px; height: 100px; background-color: var(--cyber-gray); border-radius: 50%; border: 2px solid var(--cyber-secondary); margin-bottom: 1rem;"></div>
+                                <h4 class="neon-text-cyan">Rahul Mehta</h4>
+                                <p>President</p>
+                                <p class="terminal-prompt">Accessing Profile...</p>
+                            </div>
+                            <div class="team-card-back">
+                                <h4 class="neon-text-green">Rahul Mehta</h4>
+                                <p>BTech, Final Year</p>
+                                <p>Skills: Penetration Testing, Web Security</p>
+                                <p>Certifications: CompTIA Security+, CEH</p>
+                                <p>Email: rahul.2025@niet.edu</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-card-inner">
+                            <div class="team-card-front">
+                                <div style="width: 100px; height: 100px; background-color: var(--cyber-gray); border-radius: 50%; border: 2px solid var(--cyber-secondary); margin-bottom: 1rem;"></div>
+                                <h4 class="neon-text-cyan">Priya Gupta</h4>
+                                <p>Vice President</p>
+                                <p class="terminal-prompt">Accessing Profile...</p>
+                            </div>
+                            <div class="team-card-back">
+                                <h4 class="neon-text-green">Priya Gupta</h4>
+                                <p>BTech, Final Year</p>
+                                <p>Skills: Cryptography, Network Security</p>
+                                <p>Achievements: National CTF finalist</p>
+                                <p>Email: priya.2025@niet.edu</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="team-card">
+                        <div class="team-card-inner">
+                            <div class="team-card-front">
+                                <div style="width: 100px; height: 100px; background-color: var(--cyber-gray); border-radius: 50%; border: 2px solid var(--cyber-secondary); margin-bottom: 1rem;"></div>
+                                <h4 class="neon-text-cyan">Arjun Singh</h4>
+                                <p>Technical Lead</p>
+                                <p class="terminal-prompt">Accessing Profile...</p>
+                            </div>
+                            <div class="team-card-back">
+                                <h4 class="neon-text-green">Arjun Singh</h4>
+                                <p>BTech, Third Year</p>
+                                <p>Skills: Malware Analysis, Reverse Engineering</p>
+                                <p>Projects: Developed threat detection system</p>
+                                <p>Email: arjun.2026@niet.edu</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Developers Section -->
+    <section class="section">
+        <div class="container">
+            <div class="access-level">
+                <span class="access-level-header">ACCESS LEVEL 5</span>
+                <h2 class="neon-text-cyan" style="margin-bottom: 2rem;">Website Developers</h2>
+                <div class="cyber-card">
+                    <h3 class="neon-text-green">CyberInvaders Dev Team</h3>
+                    <p>This website was created by the tech team of NIET Cyber Security Club.</p>
+                    <p style="margin-top: 1rem;">Technologies used:</p>
+                    <ul style="list-style-type: none; padding-left: 1rem; margin-top: 0.5rem;">
+                        <li><span class="terminal-prompt">Next.js with TypeScript</span></li>
+                        <li><span class="terminal-prompt">TailwindCSS</span></li>
+                        <li><span class="terminal-prompt">GSAP Animations</span></li>
+                        <li><span class="terminal-prompt">Framer Motion</span></li>
+                        <li><span class="terminal-prompt">Canvas-based effects</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Us Section -->
+    <section class="section">
+        <div class="container">
+            <div class="access-level">
+                <span class="access-level-header">ACCESS LEVEL 6</span>
+                <h2 class="neon-text-cyan" style="margin-bottom: 2rem;">Join CyberInvaders</h2>
+                <div style="max-width: 600px; margin: 0 auto; background: rgba(10, 10, 15, 0.9); padding: 2rem; border: 1px solid var(--cyber-terminal-green);">
+                    <p class="neon-text-green terminal-prompt" style="margin-bottom: 1.5rem;">User Registration Protocol</p>
+                    <form style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <div>
+                            <label class="terminal-prompt">Full Name</label>
+                            <input type="text" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--cyber-primary); color: var(--cyber-primary); padding: 0.75rem; margin-top: 0.5rem; font-family: 'Courier New', monospace;">
+                        </div>
+                        <div>
+                            <label class="terminal-prompt">Student ID</label>
+                            <input type="text" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--cyber-primary); color: var(--cyber-primary); padding: 0.75rem; margin-top: 0.5rem; font-family: 'Courier New', monospace;">
+                        </div>
+                        <div>
+                            <label class="terminal-prompt">Email Address</label>
+                            <input type="email" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--cyber-primary); color: var(--cyber-primary); padding: 0.75rem; margin-top: 0.5rem; font-family: 'Courier New', monospace;">
+                        </div>
+                        <div>
+                            <label class="terminal-prompt">Area of Interest</label>
+                            <select style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--cyber-primary); color: var(--cyber-primary); padding: 0.75rem; margin-top: 0.5rem; font-family: 'Courier New', monospace;">
+                                <option>Select Area of Interest</option>
+                                <option>Ethical Hacking</option>
+                                <option>Network Security</option>
+                                <option>Web Application Security</option>
+                                <option>Digital Forensics</option>
+                                <option>Cryptography</option>
+                                <option>Malware Analysis</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="terminal-prompt">Why do you want to join?</label>
+                            <textarea rows="4" style="width: 100%; background: rgba(0,0,0,0.5); border: 1px solid var(--cyber-primary); color: var(--cyber-primary); padding: 0.75rem; margin-top: 0.5rem; font-family: 'Courier New', monospace;"></textarea>
+                        </div>
+                        <button type="button" class="cyber-button" style="align-self: flex-start;">Submit Application</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <p class="terminal-prompt">© 2025 CyberInvaders - NIET Cyber Security Club</p>
+            <div style="margin-top: 1rem;">
+                <a href="#" class="neon-text-cyan" style="margin: 0 1rem;">Discord</a>
+                <a href="#" class="neon-text-purple" style="margin: 0 1rem;">GitHub</a>
+                <a href="#" class="neon-text-green" style="margin: 0 1rem;">Instagram</a>
+                <a href="#" class="neon-text-cyan" style="margin: 0 1rem;">LinkedIn</a>
+            </div>
+            <p style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.7;">
+                <span class="typing-effect">> System: Connection secure. Terminal session active.</span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple Matrix effect implementation
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.createElement('canvas');
+            const matrix = document.getElementById('matrix-canvas');
+            matrix.appendChild(canvas);
+            
+            const ctx = canvas.getContext('2d');
+            canvas.width = matrix.offsetWidth;
+            canvas.height = matrix.offsetHeight;
+            
+            const chars = '01アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン@#$%&{([)]}><*+~|^?!';
+            const charArray = chars.split('');
+            
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = Array.from({ length: Math.floor(columns) }, () => 1);
+            
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#00ffff';
+                ctx.font = `${fontSize}px monospace`;
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const char = charArray[Math.floor(Math.random() * charArray.length)];
+                    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 33);
+            
+            window.addEventListener('resize', function() {
+                canvas.width = matrix.offsetWidth;
+                canvas.height = matrix.offsetHeight;
+            });
+        });
+    </script>
+</body>
+</html>
